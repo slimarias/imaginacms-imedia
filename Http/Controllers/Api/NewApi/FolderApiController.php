@@ -125,7 +125,7 @@ class FolderApiController extends BaseApiController
     try {
       //Get data
       $data = $request->input('attributes');
-      
+      $params = $this->getParamsRequest($request);
       //Validate Request
       $this->validateRequestApi(new CreateFolderRequest((array)$data));
       
@@ -135,12 +135,13 @@ class FolderApiController extends BaseApiController
       $folder->created_by = $params->user->id;
       $folder->save();
       
-      event(new FileWasUploaded($savedFile));
+      event(new FileWasUploaded($folder));
       
       //Response
       $response = ["data" => ""];
       \DB::commit(); //Commit to Data Base
     } catch (\Exception $e) {
+      \Log::error($e);
       \DB::rollback();//Rollback to Data Base
       $status = $this->getStatusError($e->getCode());
       $response = ["errors" => $e->getMessage()];
@@ -148,7 +149,6 @@ class FolderApiController extends BaseApiController
     //Return response
     return response()->json($response, $status ?? 200);
   }
-  
   /**
    * UPDATE ITEM
    *
