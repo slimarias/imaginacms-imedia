@@ -38,34 +38,52 @@ trait MediaRelation
   public function transformerFiles()
   {
     $imagy = app(Imagy::class);
-    $files = $this->files;
-    $response = [];
+    $files = $this->files;//Get files
+    //Get entity attributes
+    $entityNamespace = get_class($this->resource);
+    $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
+    $moduleName = $entityNamespaceExploded[1];//Get module name
+    $entityName = $entityNamespaceExploded[3];//Get entirty name
+    //Get media fillable
+    $mediaFillable = config("asgard.{$moduleName}.config.mediaFillable.{$entityName}") ?? [];
+    //Define default image
+    $defaultPath = strtolower(url("modules/{$moduleName}/img/{$entityName}/default.jpg"));
+    $response = [];//Default response
 
     //Transform Files
-    foreach ($files as $file) {
-      //Get zone name
-      $zone = $file->pivot->zone;
-      //Transform file
-      $fileTransformer = [
-        'id' => $file->id,
-        'filename' => $file->filename,
-        'path' => $file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path,
-        'isImage' => $file->isImage(),
-        'isFolder' => $file->isFolder(),
-        'mediaType' => $file->media_type,
-        'createdAt' => $file->created_at,
-        'folderId' => $file->folder_id,
-        'smallThumb' => $imagy->getThumbnail($file->path, 'smallThumb'),
-        'mediumThumb' => $imagy->getThumbnail($file->path, 'mediumThumb'),
-        'createdBy' => $file->created_by
-      ];
-      //Add to response
-      if (isset($response[$zone])) array_push($response[$zone], $fileTransformer);
-      else $response[$zone] = [$fileTransformer];
+    foreach ($mediaFillable as $fieldName => $fileType) {
+      $zone = strtolower($fieldName);//Get zone name
+      $response[$zone] = ($fileType == 'multiple') ? [] : false;//Default zone response
+      //Get files by zone
+      $filesByZone = $files->filter(function ($item) use ($zone) {
+        return ($item->pivot->zone == strtolower($zone));
+      });
+      //Add fake file
+      if (!$filesByZone->count()) $filesByZone = [0];
+
+      //Transform files
+      foreach ($filesByZone as $file) {
+        $fileTransformer = [
+          'id' => $file->id ?? null,
+          'filename' => $file->filename ?? null,
+          'path' => $file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) : $defaultPath,
+          'isImage' => $file ? $file->isImage() : false,
+          'isFolder' => $file ? $file->isFolder() : false,
+          'mediaType' => $file->media_type ?? null,
+          'createdAt' => $file->created_at ?? null,
+          'folderId' => $file->folder_id ?? null,
+          'smallThumb' => $file ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath,
+          'mediumThumb' => $file ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath,
+          'createdBy' => $file->created_by ?? null
+        ];
+        //Add to response
+        if ($fileType == 'multiple') {
+          if ($file) array_push($response[$zone], $fileTransformer);
+        } else $response[$zone] = $fileTransformer;
+      }
     }
 
-    //Validate quantity files per zone
-    foreach ($response as $key => $item) if (count($item) == 1) $response[$key] = $item[0];
+    dd($response);
 
     //Response
     return $response;
