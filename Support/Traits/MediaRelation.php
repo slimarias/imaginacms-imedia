@@ -83,8 +83,6 @@ trait MediaRelation
       }
     }
 
-    dd($response);
-
     //Response
     return $response;
   }
