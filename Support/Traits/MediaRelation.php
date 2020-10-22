@@ -35,7 +35,7 @@ trait MediaRelation
    *
    * @return array
    */
-  public function transformerFiles()
+  public function mediaFiles()
   {
     $imagy = app(Imagy::class);
     $files = $this->files;//Get files
@@ -63,7 +63,7 @@ trait MediaRelation
 
       //Transform files
       foreach ($filesByZone as $file) {
-        $fileTransformer = [
+        $fileTransformer = (object)[
           'id' => $file->id ?? null,
           'filename' => $file->filename ?? null,
           'path' => $file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) : $defaultPath,
@@ -84,6 +84,6 @@ trait MediaRelation
     }
 
     //Response
-    return $response;
+    return (object)$response;
   }
 }
