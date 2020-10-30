@@ -72,10 +72,13 @@ trait MediaRelation
           'mediaType' => $file->media_type ?? null,
           'createdAt' => $file->created_at ?? null,
           'folderId' => $file->folder_id ?? null,
-          'smallThumb' => $file ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath,
-          'mediumThumb' => $file ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath,
           'createdBy' => $file->created_by ?? null
         ];
+        //Add imagy
+        if ($file && ($file->media_type == 'image')) {
+          $fileTransformer->smallThumb = $file ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath;
+          $fileTransformer->mediumThumb = $file ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath;
+        }
         //Add to response
         if ($fileType == 'multiple') {
           if ($file) array_push($response[$zone], $fileTransformer);
