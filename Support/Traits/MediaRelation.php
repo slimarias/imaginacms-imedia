@@ -15,7 +15,7 @@ trait MediaRelation
   {
     return $this->morphToMany(File::class, 'imageable', 'media__imageables')->withPivot('zone', 'id')->withTimestamps()->orderBy('order');
   }
-
+  
   /**
    * Make the Many to Many Morph to Relation with specific zone
    * @param string $zone
@@ -29,7 +29,7 @@ trait MediaRelation
       ->withTimestamps()
       ->orderBy('order');
   }
-
+  
   /**
    * Order and transform all files data
    *
@@ -39,6 +39,7 @@ trait MediaRelation
   {
     $imagy = app(Imagy::class);
     $files = $this->files;//Get files
+    
     //Get entity attributes
     $entityNamespace = get_class($this->resource);
     $entityNamespaceExploded = explode('\\', strtolower($entityNamespace));
@@ -49,7 +50,7 @@ trait MediaRelation
     //Define default image
     $defaultPath = strtolower(url("modules/{$moduleName}/img/{$entityName}/default.jpg"));
     $response = [];//Default response
-
+    
     //Transform Files
     foreach ($mediaFillable as $fieldName => $fileType) {
       $zone = strtolower($fieldName);//Get zone name
@@ -60,18 +61,21 @@ trait MediaRelation
       });
       //Add fake file
       if (!$filesByZone->count()) $filesByZone = [0];
-
+      
       //Transform files
       foreach ($filesByZone as $file) {
         $fileTransformer = (object)[
           'id' => $file->id ?? null,
           'filename' => $file->filename ?? null,
           'path' => $file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) : $defaultPath,
+          'relativePath' => $file ? $file->path->getRelativeUrl() : '',
           'isImage' => $file ? $file->isImage() : false,
           'isFolder' => $file ? $file->isFolder() : false,
           'mediaType' => $file->media_type ?? null,
           'createdAt' => $file->created_at ?? null,
           'folderId' => $file->folder_id ?? null,
+          'smallThumb' => $file ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath,
+          'mediumThumb' => $file ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath,
           'createdBy' => $file->created_by ?? null
         ];
         //Add imagy
