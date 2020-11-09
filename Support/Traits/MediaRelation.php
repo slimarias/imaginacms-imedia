@@ -75,7 +75,9 @@ trait MediaRelation
           'createdAt' => $file->created_at ?? null,
           'folderId' => $file->folder_id ?? null,
           'smallThumb' => $file ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath,
+          'relativeSmallThumb' => $file ? $imagy->get($file->path, 'smallThumb') : $defaultPath,
           'mediumThumb' => $file ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath,
+          'relativeMediumThumb' => $file ? $imagy->get($file->path, 'mediumThumb') : $defaultPath,
           'createdBy' => $file->created_by ?? null
         ];
         //Add imagy
@@ -89,7 +91,7 @@ trait MediaRelation
         } else $response[$zone] = $fileTransformer;
       }
     }
-
+    
     //Response
     return (object)$response;
   }
