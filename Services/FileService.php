@@ -29,15 +29,16 @@ class FileService
     }
 
     /**
-     * @param  UploadedFile $file
-     * @param int $parentId
+     * @param  UploadedFile  $file
+     * @param  int  $parentId
      * @return mixed
+     * @throws \Illuminate\Contracts\Filesystem\FileExistsException
      */
     public function store(UploadedFile $file, int $parentId = 0)
     {
         $savedFile = $this->file->createFromFile($file, $parentId);
 
-        $path = $this->getDestinationPath($savedFile->getOriginal('path'));
+        $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
         $stream = fopen($file->getRealPath(), 'r+');
         $this->filesystem->disk($this->getConfiguredFilesystem())->writeStream($path, $stream, [
             'visibility' => 'public',
