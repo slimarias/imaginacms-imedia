@@ -39,15 +39,16 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
 
     /**
      * Create a file row from the given file
-     * @param  UploadedFile $file
-     * @param int $parentId
+     * @param  UploadedFile  $file
+     * @param  int  $parentId
+     * @param  string  $disk
      * @return mixed
      */
-    public function createFromFile(UploadedFile $file, int $parentId = 0)
+    public function createFromFile(UploadedFile $file, int $parentId = 0, $disk = null)
     {
         $fileName = FileHelper::slug($file->getClientOriginalName());
 
-        $exists = $this->model->where('filename', $fileName)->where('folder_id', $parentId)->first();
+        $exists = $this->model->where('filename', $fileName)->where('folder_id', $parentId)->where('disk', $disk)->first();
 
         if ($exists) {
             $fileName = $this->getNewUniqueFilename($fileName);
@@ -61,6 +62,7 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
             'filesize' => $file->getFileInfo()->getSize(),
             'folder_id' => $parentId,
             'is_folder' => 0,
+            'disk' => $disk
         ];
 
         event($event = new FileIsCreating($data));
