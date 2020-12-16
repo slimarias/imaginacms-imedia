@@ -32,6 +32,7 @@ use Modules\Media\Repositories\Eloquent\EloquentFolderRepository;
 use Modules\Media\Repositories\FileRepository;
 use Modules\Media\Repositories\FolderRepository;
 use Modules\Tag\Repositories\TagManager;
+use Illuminate\Support\Facades\Blade;
 
 class MediaServiceProvider extends ServiceProvider
 {
@@ -97,6 +98,8 @@ class MediaServiceProvider extends ServiceProvider
         $this->registerBladeTags();
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+  
+      $this->registerComponents();
     }
 
     /**
@@ -178,4 +181,12 @@ class MediaServiceProvider extends ServiceProvider
             return "<?php echo MediaThumbnailDirective::show([$value]); ?>";
         });
     }
+  
+  /**
+   * Register components
+   */
+  
+  private function registerComponents(){
+    Blade::component('media-single-image', \Modules\Media\View\Components\SingleImage::class);
+  }
 }
