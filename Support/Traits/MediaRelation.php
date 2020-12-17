@@ -79,8 +79,13 @@ trait MediaRelation
                 //Add imagy
                 $fileTransformer->smallThumb = $file && $file->isImage() ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath;
                 $fileTransformer->mediumThumb = $file  && $file->isImage() ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath;
+                $fileTransformer->largeThumb = $file  && $file->isImage() ? $imagy->getThumbnail($file->path, 'largeThumb') : $defaultPath;
+                $fileTransformer->extraLargeThumb = $file  && $file->isImage() ? $imagy->getThumbnail($file->path, 'extraLargeThumb') : $defaultPath;
+                
                 $fileTransformer->relativeSmallThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'smallThumb')) : $defaultPath;
                 $fileTransformer->relativeMediumThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'mediumThumb')) : $defaultPath;
+                $fileTransformer->relativeLargeThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'largeThumb')) : $defaultPath;
+                $fileTransformer->relativeExtraLargeThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'extraLargeThumb')) : $defaultPath;
                 
                 //Add to response
                 if ($fileType == 'multiple') {

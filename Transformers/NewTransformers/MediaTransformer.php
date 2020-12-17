@@ -42,6 +42,8 @@ class MediaTransformer extends JsonResource
       'folderId' => $this->folder_id,
       'smallThumb' => $this->imagy->getThumbnail($this->path, 'smallThumb'),
       'mediumThumb' => $this->imagy->getThumbnail($this->path, 'mediumThumb'),
+      'largeThumb' => $this->imagy->getThumbnail($this->path, 'largeThumb'),
+      'extraLargeThumb' => $this->imagy->getThumbnail($this->path, 'extraLargeThumb'),
       'createdBy' => $this->created_by
       
     ];
