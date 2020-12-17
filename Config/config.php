@@ -68,7 +68,7 @@ return [
     ],
 
 
-  'imageSize' => ['width' => 1024, 'height' => 768, 'quality' => 90],
+  'imageSize' => ['width' => 1920, 'height' => 1080, 'quality' => 90],
  
   'watermark' => [
     'activated' => false,
