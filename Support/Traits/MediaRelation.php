@@ -4,6 +4,7 @@ namespace Modules\Media\Support\Traits;
 
 use Modules\Media\Entities\File;
 use Modules\Media\Image\Imagy;
+use Modules\Media\Image\ThumbnailManager;
 
 trait MediaRelation
 {
@@ -77,16 +78,14 @@ trait MediaRelation
                     'createdBy' => $file->created_by ?? null
                 ];
                 //Add imagy
-                $fileTransformer->smallThumb = $file && $file->isImage() ? $imagy->getThumbnail($file->path, 'smallThumb') : $defaultPath;
-                $fileTransformer->mediumThumb = $file  && $file->isImage() ? $imagy->getThumbnail($file->path, 'mediumThumb') : $defaultPath;
-                $fileTransformer->largeThumb = $file  && $file->isImage() ? $imagy->getThumbnail($file->path, 'largeThumb') : $defaultPath;
-                $fileTransformer->extraLargeThumb = $file  && $file->isImage() ? $imagy->getThumbnail($file->path, 'extraLargeThumb') : $defaultPath;
-                
-                $fileTransformer->relativeSmallThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'smallThumb')) : $defaultPath;
-                $fileTransformer->relativeMediumThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'mediumThumb')) : $defaultPath;
-                $fileTransformer->relativeLargeThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'largeThumb')) : $defaultPath;
-                $fileTransformer->relativeExtraLargeThumb = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, 'extraLargeThumb')) : $defaultPath;
-                
+  
+              $thumbnails = app(ThumbnailManager::class)->all();
+              foreach ($thumbnails as $thumbnail){
+                $name = $thumbnail->name();
+                $fileTransformer->{$name} = $file && $file->isImage() ? $imagy->getThumbnail($file->path, $name) : $defaultPath;
+                $fileTransformer->{'relative'.ucfirst($name)} = $file  && $file->isImage() ? str_replace(url("/"),"",$imagy->getThumbnail($file->path, $name)) : $defaultPath;
+              }
+             
                 //Add to response
                 if ($fileType == 'multiple') {
                     if ($file) array_push($response[$zone], $fileTransformer);

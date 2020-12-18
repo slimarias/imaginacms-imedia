@@ -156,7 +156,10 @@ class MediaServiceProvider extends ServiceProvider
           $constraint->upsize();
         },
       ],
-    ]);
+    ],
+      'webp'
+    );
+    
     $this->app[ThumbnailManager::class]->registerThumbnail('mediumThumb', [
       'quality' => 90,
       'resize' => [
@@ -167,7 +170,10 @@ class MediaServiceProvider extends ServiceProvider
           $constraint->upsize();
         },
       ],
-    ]);
+    ],
+      'webp'
+    );
+    
     $this->app[ThumbnailManager::class]->registerThumbnail('largeThumb', [
       'quality' => 90,
       'resize' => [
@@ -178,7 +184,10 @@ class MediaServiceProvider extends ServiceProvider
           $constraint->upsize();
         },
       ],
-    ]);
+    ],
+    'webp'
+    );
+    
     $this->app[ThumbnailManager::class]->registerThumbnail('extraLargeThumb', [
       'quality' => 90,
       'resize' => [
@@ -189,7 +198,9 @@ class MediaServiceProvider extends ServiceProvider
           $constraint->upsize();
         },
       ],
-    ]);
+    ],
+      'webp'
+    );
     
   }
   
