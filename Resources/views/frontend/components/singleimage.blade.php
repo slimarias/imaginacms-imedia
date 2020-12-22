@@ -12,7 +12,7 @@
         @php echo (!empty($largeSrc) ? $largeSrc." 900w," : '') @endphp
         @php echo (!empty($extraLargeSrc) ? $extraLargeSrc." 1200w," : '') @endphp
           "
-      class="lazyload img-fluid {{$imgClasses}}"/>
+      class="lazyload img-fluid w-100 {{$imgClasses}}"/>
   
     @if(!empty($url))
   </a>
