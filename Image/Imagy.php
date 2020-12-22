@@ -117,7 +117,7 @@ class Imagy
             foreach ($thumbnail->filters() as $manipulation => $options) {
                 $image = $this->imageFactory->make($manipulation)->handle($image, $options);
             }
-       
+
             $image = $image->stream($thumbnail->format(), Arr::get($thumbnail->filters(), 'quality', 90));
             $this->writeImage( preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename).'.'.$thumbnail->format(), $image);
         }
@@ -131,8 +131,8 @@ class Imagy
      */
     private function newFilename($path, $thumbnail)
     {
-      $thumbnails = app(ThumbnailManager::class)->all();
-      
+      $thumbnails = $this->manager->all() ;
+
         $filename = pathinfo($path, PATHINFO_FILENAME);
 
         return $filename . '_' . $thumbnail . '.' . $thumbnails[$thumbnail]->format();

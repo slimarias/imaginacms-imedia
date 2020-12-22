@@ -37,14 +37,14 @@ use Illuminate\Support\Facades\Blade;
 class MediaServiceProvider extends ServiceProvider
 {
   use CanPublishConfiguration, CanGetSidebarClassForModule;
-  
+
   /**
    * Indicates if loading of the provider is deferred.
    *
    * @var bool
    */
   protected $defer = false;
-  
+
   /**
    * Register the service provider.
    *
@@ -53,9 +53,9 @@ class MediaServiceProvider extends ServiceProvider
   public function register()
   {
     $this->registerBindings();
-    
+
     $this->registerCommands();
-    
+
     $this->app->bind('media.single.directive', function () {
       return new MediaSingleDirective();
     });
@@ -65,44 +65,44 @@ class MediaServiceProvider extends ServiceProvider
     $this->app->bind('media.thumbnail.directive', function () {
       return new MediaThumbnailDirective();
     });
-    
+
     $this->app['events']->listen(
       BuildingSidebar::class,
       $this->getSidebarClassForModule('media', RegisterMediaSidebar::class)
     );
-    
+
     $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
       $event->load('media', Arr::dot(trans('media::media')));
       $event->load('folders', Arr::dot(trans('media::folders')));
     });
-    
+
     app('router')->bind('media', function ($id) {
       return app(FileRepository::class)->find($id);
     });
   }
-  
+
   public function boot(DispatcherContract $events)
   {
     $this->publishConfig('media', 'config');
     $this->publishConfig('media', 'permissions');
     $this->publishConfig('media', 'assets');
-    
+
     $events->listen(StoringMedia::class, HandleMediaStorage::class);
     $events->listen(DeletingMedia::class, RemovePolymorphicLink::class);
     $events->listen(FolderWasCreated::class, CreateFolderOnDisk::class);
     $events->listen(FolderWasUpdated::class, RenameFolderOnDisk::class);
     $events->listen(FolderIsDeleting::class, DeleteFolderOnDisk::class);
     $events->listen(FolderIsDeleting::class, DeleteAllChildrenOfFolder::class);
-    
+
     $this->app[TagManager::class]->registerNamespace(new File());
     $this->registerThumbnails();
     $this->registerBladeTags();
-    
+
     $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-    
+
     $this->registerComponents();
   }
-  
+
   /**
    * Get the services provided by the provider.
    *
@@ -112,7 +112,7 @@ class MediaServiceProvider extends ServiceProvider
   {
     return [];
   }
-  
+
   private function registerBindings()
   {
     $this->app->bind(FileRepository::class, function () {
@@ -122,7 +122,7 @@ class MediaServiceProvider extends ServiceProvider
       return new EloquentFolderRepository(new File());
     });
   }
-  
+
   /**
    * Register all commands for this module
    */
@@ -130,7 +130,7 @@ class MediaServiceProvider extends ServiceProvider
   {
     $this->registerRefreshCommand();
   }
-  
+
   /**
    * Register the refresh thumbnails command
    */
@@ -139,14 +139,14 @@ class MediaServiceProvider extends ServiceProvider
     $this->app->singleton('command.media.refresh', function ($app) {
       return new RefreshThumbnailCommand($app['Modules\Media\Repositories\FileRepository']);
     });
-    
+
     $this->commands('command.media.refresh');
   }
-  
+
   private function registerThumbnails()
   {
     $this->app[ThumbnailManager::class]->registerThumbnail('smallThumb', [
-   
+
       'quality' => 90,
       'resize' => [
         'width' => 300,
@@ -159,7 +159,7 @@ class MediaServiceProvider extends ServiceProvider
     ],
       'webp'
     );
-    
+
     $this->app[ThumbnailManager::class]->registerThumbnail('mediumThumb', [
       'quality' => 90,
       'resize' => [
@@ -173,7 +173,7 @@ class MediaServiceProvider extends ServiceProvider
     ],
       'webp'
     );
-    
+
     $this->app[ThumbnailManager::class]->registerThumbnail('largeThumb', [
       'quality' => 90,
       'resize' => [
@@ -187,7 +187,7 @@ class MediaServiceProvider extends ServiceProvider
     ],
     'webp'
     );
-    
+
     $this->app[ThumbnailManager::class]->registerThumbnail('extraLargeThumb', [
       'quality' => 90,
       'resize' => [
@@ -201,9 +201,9 @@ class MediaServiceProvider extends ServiceProvider
     ],
       'webp'
     );
-    
+
   }
-  
+
   private function registerBladeTags()
   {
     if (app()->environment() === 'testing') {
@@ -219,13 +219,13 @@ class MediaServiceProvider extends ServiceProvider
       return "<?php echo MediaThumbnailDirective::show([$value]); ?>";
     });
   }
-  
+
   /**
    * Register components
    */
-  
+
   private function registerComponents()
   {
-    Blade::component('media-single-image', \Modules\Media\View\Components\SingleImage::class);
+    Blade::componentNamespace("Modules\Media\View\Components", 'media');
   }
 }
