@@ -226,6 +226,6 @@ class MediaServiceProvider extends ServiceProvider
   
   private function registerComponents()
   {
-    Blade::component('media-single-image', \Modules\Media\View\Components\SingleImage::class);
+    Blade::componentNamespace("Modules\Media\View\Components", 'media');
   }
 }

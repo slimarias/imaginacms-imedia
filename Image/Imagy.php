@@ -131,7 +131,7 @@ class Imagy
      */
     private function newFilename($path, $thumbnail)
     {
-      $thumbnails = app(ThumbnailManager::class)->all();
+      $thumbnails = $this->manager->all() ;
       
         $filename = pathinfo($path, PATHINFO_FILENAME);
 
