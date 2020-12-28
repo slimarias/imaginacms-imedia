@@ -5,7 +5,6 @@
         <img
         data-sizes="auto"
         data-src="{{$src}}"
-        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
         alt="{{$alt}}"
         data-srcset=" @php echo (!empty($smallSrc) ? $smallSrc." 300w,": '') @endphp
         @php echo (!empty($mediumSrc) ? $mediumSrc." 600w," : '') @endphp
