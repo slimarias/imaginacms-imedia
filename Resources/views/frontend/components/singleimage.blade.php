@@ -1,11 +1,11 @@
 @if(!empty($url))
-  <a href="{{$url}}" title="{{$title}}" class="w-100">
+  <a href="{{$url}}" title="{{$title}}" class="image-link w-100">
     @endif
   
         <img
         data-sizes="auto"
         data-src="{{$src}}"
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
         alt="{{$alt}}"
         data-srcset=" @php echo (!empty($smallSrc) ? $smallSrc." 300w,": '') @endphp
         @php echo (!empty($mediumSrc) ? $mediumSrc." 600w," : '') @endphp
