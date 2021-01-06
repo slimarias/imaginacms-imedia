@@ -4,6 +4,7 @@
   
         <img
         data-sizes="auto"
+        width="300"
         data-src="{{$src}}"
         alt="{{$alt}}"
         data-srcset=" @php echo (!empty($smallSrc) ? $smallSrc." 300w,": '') @endphp
@@ -11,7 +12,7 @@
         @php echo (!empty($largeSrc) ? $largeSrc." 900w," : '') @endphp
         @php echo (!empty($extraLargeSrc) ? $extraLargeSrc." 1200w," : '') @endphp
           "
-      class="lazyload img-fluid {{$imgClasses}}"/>
+      class="img-fluid lazyload {{$imgClasses}}"/>
   
     @if(!empty($url))
   </a>

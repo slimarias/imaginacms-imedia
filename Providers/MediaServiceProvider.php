@@ -153,7 +153,6 @@ class MediaServiceProvider extends ServiceProvider
         'height' => null,
         'callback' => function ($constraint) {
           $constraint->aspectRatio();
-          $constraint->upsize();
         },
       ],
     ],
@@ -167,7 +166,6 @@ class MediaServiceProvider extends ServiceProvider
         'height' => null,
         'callback' => function ($constraint) {
           $constraint->aspectRatio();
-          $constraint->upsize();
         },
       ],
     ],
@@ -181,7 +179,6 @@ class MediaServiceProvider extends ServiceProvider
         'height' => null,
         'callback' => function ($constraint) {
           $constraint->aspectRatio();
-          $constraint->upsize();
         },
       ],
     ],
@@ -195,7 +192,6 @@ class MediaServiceProvider extends ServiceProvider
         'height' => null,
         'callback' => function ($constraint) {
           $constraint->aspectRatio();
-          $constraint->upsize();
         },
       ],
     ],
