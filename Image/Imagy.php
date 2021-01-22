@@ -53,25 +53,27 @@ class Imagy
      * @param  bool   $forceCreate
      * @return string
      */
-    public function get($path, $thumbnail, $forceCreate = false)
+    public function get($path, $thumbnail, $forceCreate = false, $disk = null)
     {
         if (!$this->isImage($path)) {
             return;
         }
 
+        $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
+
         $filename = $this->getFilenameFor($path, $thumbnail);
 
-        if ($this->returnCreatedFile($filename, $forceCreate)) {
+        if ($this->returnCreatedFile($filename, $forceCreate, $disk)) {
             return $filename;
         }
-        if ($this->fileExists($filename) === true) {
-            $this->filesystem->disk($this->getConfiguredFilesystem())->delete($filename);
+        if ($this->fileExists($filename, $disk) === true) {
+            $this->filesystem->disk($disk)->delete($filename);
         }
 
-        $mediaPath = (new MediaPath($filename))->getUrl();
+        $mediaPath = (new MediaPath($filename,$disk))->getUrl();
         $this->makeNew($path, $mediaPath, $thumbnail);
 
-        return (new MediaPath($filename))->getUrl();
+        return (new MediaPath($filename,$disk))->getUrl();
     }
 
     /**
@@ -80,37 +82,43 @@ class Imagy
      * @param  string $thumbnail
      * @return string
      */
-    public function getThumbnail($originalImage, $thumbnail)
+    public function getThumbnail($originalImage, $thumbnail, $disk = null)
     {
         if ($originalImage instanceof File) {
+            $disk = $originalImage->disk;
             $originalImage = $originalImage->path;
         }
+
+        $disk = is_null($disk)? config('asgard.media.config.filesystem') : $disk;
 
         if (!$this->isImage($originalImage)) {
             if ($originalImage instanceof MediaPath) {
                 return $originalImage->getUrl();
             }
 
-            return (new MediaPath($originalImage))->getRelativeUrl();
+            return (new MediaPath($originalImage,$disk))->getRelativeUrl();
         }
 
         $path = $this->getFilenameFor($originalImage, $thumbnail);
 
-        return (new MediaPath($path))->getUrl();
+        return (new MediaPath($path,$disk))->getUrl();
     }
 
     /**
      * Create all thumbnails for the given image path
      * @param MediaPath $path
      */
-    public function createAll(MediaPath $path)
+    public function createAll(MediaPath $path, $disk = null)
     {
+
+        $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
+
         if (!$this->isImage($path)) {
             return;
         }
 
         foreach ($this->manager->all() as $thumbnail) {
-            $image = $this->image->make($this->filesystem->disk($this->getConfiguredFilesystem())->get($this->getDestinationPath($path->getRelativeUrl())));
+            $image = $this->image->make($this->filesystem->disk($disk)->get($this->getDestinationPath($path->getRelativeUrl())));
 
             $filename = $this->getFilenameFor($path, $thumbnail);
 
@@ -144,7 +152,7 @@ class Imagy
      * @param  bool   $forceCreate
      * @return bool
      */
-    private function returnCreatedFile($filename, $forceCreate)
+    private function returnCreatedFile($filename, $forceCreate, $disk = null)
     {
         return $this->fileExists($filename) && $forceCreate === false;
     }
@@ -204,8 +212,11 @@ class Imagy
      */
     public function deleteAllFor(File $file)
     {
+
+        $disk = is_null($file->disk)? $this->getConfiguredFilesystem() : $file->disk;
+
         if (!$this->isImage($file->path)) {
-            return $this->filesystem->disk($this->getConfiguredFilesystem())->delete($this->getDestinationPath($file->path->getRelativeUrl()));
+            return $this->filesystem->disk($disk)->delete($this->getDestinationPath($file->path->getRelativeUrl()));
         }
 
         $paths[] = $this->getDestinationPath($file->path->getRelativeUrl());
@@ -213,12 +224,12 @@ class Imagy
         foreach ($this->manager->all() as $thumbnail) {
             $path = $this->getFilenameFor($file->path, $thumbnail);
 
-            if ($this->fileExists($this->getDestinationPath($path))) {
-                $paths[] = (new MediaPath($this->getDestinationPath($path)))->getRelativeUrl();
+            if ($this->fileExists($this->getDestinationPath($path),$disk)) {
+                $paths[] = (new MediaPath($this->getDestinationPath($path),$disk))->getRelativeUrl();
             }
         }
 
-        return $this->filesystem->disk($this->getConfiguredFilesystem())->delete($paths);
+        return $this->filesystem->disk($disk)->delete($paths);
     }
 
     private function getConfiguredFilesystem()
@@ -228,11 +239,13 @@ class Imagy
 
     /**
      * @param $filename
+     * @param  string  $disk
      * @return bool
      */
-    private function fileExists($filename)
+    private function fileExists($filename, $disk = null)
     {
-        return $this->filesystem->disk($this->getConfiguredFilesystem())->exists($filename);
+        $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
+        return $this->filesystem->disk($disk)->exists($filename);
     }
 
     /**
