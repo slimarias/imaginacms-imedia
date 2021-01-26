@@ -4,7 +4,7 @@
   
         <img
         data-sizes="auto"
-        width="{{$with}}"
+        width="{{$width}}"
         data-src="{{$src}}"
         alt="{{$alt}}"
         data-srcset=" @php echo (!empty($smallSrc) ? $smallSrc." 300w,": '') @endphp

@@ -23,18 +23,18 @@ class SingleImage extends Component
   public $mediumSrc;
   public $smallSrc;
   public $imgClasses;
-  public $with;
+  public $width;
   
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '', $with = "300px")
+                              $smallSrc = null, $fallback = null, $imgClasses = '', $width = "300px")
   {
     $this->src = $src;
     $this->alt = $alt;
     $this->title = $title;
     $this->url = $url;
     $this->imgClasses = $imgClasses;
-    $this->with = $with;
+    $this->width = $width;
   
     if (!empty($fallback)) {
       $this->extension = pathinfo($fallback, PATHINFO_EXTENSION);
