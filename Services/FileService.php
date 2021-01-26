@@ -31,16 +31,20 @@ class FileService
     /**
      * @param  UploadedFile  $file
      * @param  int  $parentId
+     * @param  string  $disk
      * @return mixed
      * @throws \Illuminate\Contracts\Filesystem\FileExistsException
      */
-    public function store(UploadedFile $file, int $parentId = 0)
+    public function store(UploadedFile $file, int $parentId = 0, $disk = null)
     {
-        $savedFile = $this->file->createFromFile($file, $parentId);
+        $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
+
+        $savedFile = $this->file->createFromFile($file, $parentId, ($disk==$this->getConfiguredFilesystem())?null:$disk);
+
 
         $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));
         $stream = fopen($file->getRealPath(), 'r+');
-        $this->filesystem->disk($this->getConfiguredFilesystem())->writeStream($path, $stream, [
+        $this->filesystem->disk($disk)->writeStream($path, $stream, [
             'visibility' => 'public',
             'mimetype' => $savedFile->mimetype,
         ]);
@@ -56,7 +60,7 @@ class FileService
      */
     private function createThumbnails(File $savedFile)
     {
-        $this->dispatch(new CreateThumbnails($savedFile->path));
+        $this->dispatch(new CreateThumbnails($savedFile->path,$savedFile->disk));
     }
 
     /**

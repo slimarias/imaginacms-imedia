@@ -39,7 +39,8 @@ class RenameFolderOnDisk
 
     private function renameFolder($event)
     {
-        $this->filesystem->disk($this->getConfiguredFilesystem())
+        $disk = is_null($event->folder->disk)? $this->getConfiguredFilesystem() : $event->folder->disk;
+        $this->filesystem->disk($disk)
             ->move(
                 $this->getDestinationPath($event->previousFolderData['path']->getRelativeUrl()),
                 $this->getDestinationPath($event->folder->path->getRelativeUrl())
