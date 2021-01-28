@@ -23,23 +23,25 @@ class SingleImage extends Component
   public $mediumSrc;
   public $smallSrc;
   public $imgClasses;
-  
+  public $width;
+
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '')
+                              $smallSrc = null, $fallback = null, $imgClasses = '', $width = "300px")
   {
     $this->src = $src;
     $this->alt = $alt;
     $this->title = $title;
     $this->url = $url;
     $this->imgClasses = $imgClasses;
-  
+    $this->width = $width;
+
     if (!empty($fallback)) {
       $this->extension = pathinfo($fallback, PATHINFO_EXTENSION);
       if ($this->extension == "jpg") $this->extension = "jpeg";
     }
-  
-   
+
+
     if($isMedia && !empty($mediaFiles)){
       $this->src = $mediaFiles->{$zone}->relativeExtraLargeThumb;
       $this->fallback = $mediaFiles->{$zone}->relativePath;
@@ -53,9 +55,9 @@ class SingleImage extends Component
       $this->mediumSrc = $mediumSrc;
       $this->smallSrc = $smallSrc;
     }
-    
+
   }
-  
+
   /**
    * Get the view / contents that represent the component.
    *
