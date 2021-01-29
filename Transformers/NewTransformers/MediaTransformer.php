@@ -19,15 +19,15 @@ class MediaTransformer extends JsonResource
    * @var ThumbnailManager
    */
   private $thumbnailManager;
-  
+
   public function __construct($resource)
   {
     parent::__construct($resource);
-    
+
     $this->imagy = app(Imagy::class);
     $this->thumbnailManager = app(ThumbnailManager::class);
   }
-  
+
   public function toArray($request)
   {
     $data = [
@@ -40,55 +40,55 @@ class MediaTransformer extends JsonResource
       'faIcon' => FileHelper::getFaIcon($this->media_type),
       'createdAt' => $this->created_at,
       'folderId' => $this->folder_id,
+      'filesize' => $this->filesize,
       'smallThumb' => $this->imagy->getThumbnail($this->path, 'smallThumb'),
       'mediumThumb' => $this->imagy->getThumbnail($this->path, 'mediumThumb'),
       'largeThumb' => $this->imagy->getThumbnail($this->path, 'largeThumb'),
       'extraLargeThumb' => $this->imagy->getThumbnail($this->path, 'extraLargeThumb'),
       'createdBy' => $this->created_by
-      
     ];
-  
+
     $data['createdByUser'] = new UserTransformer($this->createdBy);
-    
+
     foreach ($this->thumbnailManager->all() as $thumbnail) {
       $thumbnailName = $thumbnail->name();
-      
+
       $data['thumbnails'][] = [
         'name' => $thumbnailName,
         'path' => $this->imagy->getThumbnail($this->path, $thumbnailName),
         'size' => $thumbnail->size(),
       ];
     }
-    
+
     foreach (LaravelLocalization::getSupportedLocales() as $locale => $supportedLocale) {
       $data[$locale] = [];
       foreach ($this->translatedAttributes as $translatedAttribute) {
         $data[$locale][$translatedAttribute] = $this->translateOrNew($locale)->$translatedAttribute;
       }
     }
-    
+
     foreach ($this->tags as $tag) {
       $data['tags'][] = $tag->name;
     }
-    
+
     return $data;
   }
-  
+
   private function getPath()
   {
     if ($this->is_folder) {
       return $this->path->getRelativeUrl();
     }
-    
+
     return (string)$this->path;
   }
-  
+
   private function getDeleteUrl()
   {
     if ($this->isImage()) {
       return route('api.media.media.destroy', $this->id);
     }
-    
+
     return route('api.media.folders.destroy', $this->id);
   }
 }
