@@ -41,6 +41,7 @@ class MediaTransformer extends JsonResource
       'createdAt' => $this->created_at,
       'folderId' => $this->folder_id,
       'filesize' => $this->filesize,
+      'extension' => $this->extension,
       'smallThumb' => $this->imagy->getThumbnail($this->path, 'smallThumb'),
       'mediumThumb' => $this->imagy->getThumbnail($this->path, 'mediumThumb'),
       'largeThumb' => $this->imagy->getThumbnail($this->path, 'largeThumb'),
