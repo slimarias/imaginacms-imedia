@@ -20,6 +20,7 @@ class MediaController extends Controller
 
     public function show($path)
     {
+     
         $file = $this->file->findForVirtualPath($path);
         $type = $file->mimetype;
 

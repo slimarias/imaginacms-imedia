@@ -43,12 +43,12 @@ class SingleImage extends Component
   
    
     if($isMedia && !empty($mediaFiles)){
-      $this->src = $mediaFiles->{$zone}->relativeExtraLargeThumb;
+      $this->src = $mediaFiles->{$zone}->extraLargeThumb;
       $this->fallback = $mediaFiles->{$zone}->relativePath;
-      $this->extraLargeSrc = $mediaFiles->{$zone}->relativeExtraLargeThumb;
-      $this->largeSrc = $mediaFiles->{$zone}->relativeLargeThumb;
-      $this->mediumSrc = $mediaFiles->{$zone}->relativeMediumThumb;
-      $this->smallSrc = $mediaFiles->{$zone}->relativeSmallThumb;
+      $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb;
+      $this->largeSrc = $mediaFiles->{$zone}->largeThumb;
+      $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb;
+      $this->smallSrc = $mediaFiles->{$zone}->smallThumb;
     }else{
       $this->extraLargeSrc = $extraLargeSrc;
       $this->largeSrc = $largeSrc;
