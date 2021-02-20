@@ -127,7 +127,7 @@ class Imagy
             }
        
             $image = $image->stream($thumbnail->format(), Arr::get($thumbnail->filters(), 'quality', 90));
-            $this->writeImage( preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename).'.'.$thumbnail->format(), $image);
+            $this->writeImage( preg_replace('/\\.[^.\\s]{3,4}$/', '', $filename).'.'.$thumbnail->format(), $image, $disk);
         }
     }
 
@@ -162,18 +162,20 @@ class Imagy
      * @param string $filename
      * @param Stream $image
      */
-    private function writeImage($filename, Stream $image)
+    private function writeImage($filename, Stream $image, $disk = null)
     {
-        $filename = $this->getDestinationPath($filename);
+      $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
+  
+      $filename = $this->getDestinationPath($filename);
         $resource = $image->detach();
         $config = [
             'visibility' => 'public',
             'mimetype' => \GuzzleHttp\Psr7\mimetype_from_filename($filename),
         ];
         if ($this->fileExists($filename)) {
-            return $this->filesystem->disk($this->getConfiguredFilesystem())->updateStream($filename, $resource, $config);
+            return $this->filesystem->disk($disk)->updateStream($filename, $resource, $config);
         }
-        $this->filesystem->disk($this->getConfiguredFilesystem())->writeStream($filename, $resource, $config);
+        $this->filesystem->disk($disk)->writeStream($filename, $resource, $config);
     }
 
     /**

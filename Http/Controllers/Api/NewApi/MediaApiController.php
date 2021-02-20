@@ -115,6 +115,8 @@ class MediaApiController extends BaseApiController
       //Get Parameters from URL.
       $params = $this->getParamsRequest($request);
   
+      $disk = (in_array($request->get('disk'),array_keys(config('filesystems.disks'))))? $request->get('disk') : null;
+  
       //Get data
       // $data = $request->input('attributes');
       
@@ -143,7 +145,7 @@ class MediaApiController extends BaseApiController
         \File::put($filePath, $image->stream('jpg',$imageSize->quality));
       }
       
-      $savedFile = $this->fileService->store($file, $request->get('parent_id'));
+      $savedFile = $this->fileService->store($file, $request->get('parent_id'),$disk);
   
       $savedFile->created_by =  $params->user->id;
       $savedFile->save();

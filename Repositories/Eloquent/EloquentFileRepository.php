@@ -187,11 +187,13 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
         return $this->model->where('folder_id', $folderId)->get();
     }
 
-    public function findForVirtualPath(string $path)
+    public function findForVirtualPath($criteria, $params = [])
     {
-        $prefix = config('asgard.media.config.files-path');
-
-        return $this->model->where('path', $prefix . $path)->first();
+        $query = $this->model->where('id', $criteria);
+        
+        $this->validateIndexAllPermission($query, $params);
+          
+          return $query->first();
     }
 
     public function allForGrid(): Collection
@@ -314,6 +316,24 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
         });
       }
     }
+    
+    //Getting the disk name
+    $filterDisk = isset($params->filter) && isset($params->filter->disk) ? $params->filter->disk : config('asgard.media.config.filesystem');
+    
+    //Validate disk name
+    $filterDisk = in_array($filterDisk,array_keys(config('filesystems.disks'))) ? $filterDisk : config('asgard.media.config.filesystem');
+  
+    //Filter by disk name
+    if($filterDisk == config('asgard.media.config.filesystem')){
+      $query->where(function ($q){
+        $q->where("disk",config('asgard.media.config.filesystem'))
+          ->orWhereNull("disk");
+      });
+    }else{
+      $query->where("disk",$filterDisk);
+    }
+    
+    
   
     $this->validateIndexAllPermission($query,$params);
     /*== FIELDS ==*/
@@ -432,11 +452,12 @@ class EloquentFileRepository extends EloquentBaseRepository implements FileRepos
   function validateIndexAllPermission(&$query, $params)
   {
     // filter by permission: index all leads
-    
+  
     if (!isset($params->permissions['media.medias.index-all']) ||
       (isset($params->permissions['media.medias.index-all']) &&
         !$params->permissions['media.medias.index-all'])) {
       $user = $params->user;
+      
       $role = $params->role;
       // if is salesman or salesman manager or salesman sub manager
       $query->where('created_by', $user->id);

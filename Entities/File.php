@@ -43,7 +43,7 @@ class File extends Model implements TaggableInterface, Responsable
         'height',
         'filesize',
         'folder_id',
-    'created_by',
+        'created_by',
         'disk'
     ];
     protected $appends = ['path_string', 'media_type'];
