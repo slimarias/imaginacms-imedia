@@ -36,22 +36,21 @@ class MediaController extends BaseApiController
           $params = $this->getParamsRequest($request);
          
           $file = $this->file->findForVirtualPath($criteria,$params);
-     
-  
+
           //Break if no found item
           if(!$file) throw new Exception('Item not found',404);
-          
+
           $type = $file->mimetype;
   
           $privateDisk = config('filesystems.disks.privatemedia');
-          $path = $privateDisk["root"]. $file->path->getRelativeUrl();
-  
+          $path = $privateDisk["root"]. config('asgard.media.config.files-path').$file->filename;
+
           return response()->file($path, [
             'Content-Type' => $type,
           ]);
           
         } catch (\Exception $e) {
-
+          dd($e->getMessage());
           return abort(404);
         }
         

@@ -68,6 +68,8 @@ trait MediaRelation
                 $fileTransformer = (object)[
                     'id' => $file->id ?? null,
                     'filename' => $file->filename ?? null,
+                    'mimeType' => $file->mimetype ?? null,
+                    'fileSize' => $file->filesize ?? null,
                     'path' => $file ? ($file->is_folder ? $file->path->getRelativeUrl() : (string)$file->path) : $defaultPath,
                     'relativePath' => $file ? $file->path->getRelativeUrl() : '',
                     'isImage' => $file ? $file->isImage() : false,
