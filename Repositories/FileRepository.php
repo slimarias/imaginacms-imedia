@@ -47,7 +47,7 @@ interface FileRepository extends BaseRepository
      */
     public function allChildrenOf(int $folderId) : Collection;
 
-    public function findForVirtualPath(string $path);
+    public function findForVirtualPath($criteria);
 
     public function allForGrid() : Collection;
 

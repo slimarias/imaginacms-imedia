@@ -39,7 +39,7 @@ class FileService
     {
         $disk = is_null($disk)? $this->getConfiguredFilesystem() : $disk;
 
-        $savedFile = $this->file->createFromFile($file, $parentId, ($disk==$this->getConfiguredFilesystem())?null:$disk);
+        $savedFile = $this->file->createFromFile($file, $parentId, $disk);
 
 
         $path = $this->getDestinationPath($savedFile->getRawOriginal('path'));

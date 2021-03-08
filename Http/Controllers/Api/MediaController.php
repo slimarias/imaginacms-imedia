@@ -123,7 +123,7 @@ class MediaController extends Controller
     public function store(UploadMediaRequest $request) : JsonResponse
     {
 
-        $disk = (in_array($request->get('disk'),config('asgard.media.config.allowed-filesystems')))? $request->get('disk') : null;
+        $disk = (in_array($request->get('disk'),array_keys(config('filesystems.disks'))))? $request->get('disk') : null;
 
         $file = $request->file('file');
         $extension = $file->extension();
@@ -163,7 +163,7 @@ class MediaController extends Controller
 
     public function storeDropzone(UploadDropzoneMediaRequest $request) : JsonResponse
     {
-        $disk = (in_array($request->get('disk'),config('asgard.media.config.allowed-filesystems')))? $request->get('disk') : null;
+        $disk = (in_array($request->get('disk'),config('filesystems.disks')))? $request->get('disk') : null;
         $savedFile = $this->fileService->store($request->file('file'), null, $disk);
 
         if (is_string($savedFile)) {

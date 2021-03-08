@@ -40,6 +40,7 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
             'path' => $this->getPath($data),
             'is_folder' => true,
             'folder_id' => Arr::get($data, 'parent_id'),
+            'disk' => Arr::get($data,'disk')
         ];
         event($event = new FolderIsCreating($data));
         $folder = $this->model->create($event->getAttributes());
@@ -59,6 +60,7 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
             'filename' => Arr::get($data, 'name'),
             'path' => $this->getPath($data),
             'parent_id' => Arr::get($data, 'parent_id'),
+          'disk' => Arr::get($data,'disk')
         ];
 
         event($event = new FolderIsUpdating($formattedData));
@@ -251,6 +253,11 @@ class EloquentFolderRepository extends EloquentBaseRepository implements FolderR
           ->where('imageable.imageable_type',$filter->entity)
           ->get()->pluck("file_id")->toArray();
         $query->whereIn("id",$filesIds);
+      }
+  
+      //disk
+      if (isset($filter->disk) && !empty($filter->disk)) {
+        $query->whereIn("disk",$filter->disk);
       }
 
       //add filter by search

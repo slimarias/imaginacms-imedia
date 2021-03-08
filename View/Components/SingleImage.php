@@ -23,17 +23,19 @@ class SingleImage extends Component
   public $mediumSrc;
   public $smallSrc;
   public $imgClasses;
+  public $imgStyles;
   public $width;
 
   public function __construct($src = '', $alt = '', $title = null, $url = null, $isMedia = false, $mediaFiles = null,
                               $zone = 'mainimage', $extraLargeSrc = null, $largeSrc = null, $mediumSrc = null,
-                              $smallSrc = null, $fallback = null, $imgClasses = '', $width = "300px")
+                              $smallSrc = null, $fallback = null, $imgClasses = '',  $imgStyles = '', $width = "300px")
   {
     $this->src = $src;
     $this->alt = $alt;
     $this->title = $title;
     $this->url = $url;
     $this->imgClasses = $imgClasses;
+    $this->imgStyles = $imgStyles;
     $this->width = $width;
 
     if (!empty($fallback)) {
@@ -43,12 +45,12 @@ class SingleImage extends Component
 
 
     if($isMedia && !empty($mediaFiles)){
-      $this->src = $mediaFiles->{$zone}->relativeExtraLargeThumb;
+      $this->src = $mediaFiles->{$zone}->extraLargeThumb;
       $this->fallback = $mediaFiles->{$zone}->relativePath;
-      $this->extraLargeSrc = $mediaFiles->{$zone}->relativeExtraLargeThumb;
-      $this->largeSrc = $mediaFiles->{$zone}->relativeLargeThumb;
-      $this->mediumSrc = $mediaFiles->{$zone}->relativeMediumThumb;
-      $this->smallSrc = $mediaFiles->{$zone}->relativeSmallThumb;
+      $this->extraLargeSrc = $mediaFiles->{$zone}->extraLargeThumb;
+      $this->largeSrc = $mediaFiles->{$zone}->largeThumb;
+      $this->mediumSrc = $mediaFiles->{$zone}->mediumThumb;
+      $this->smallSrc = $mediaFiles->{$zone}->smallThumb;
     }else{
       $this->extraLargeSrc = $extraLargeSrc;
       $this->largeSrc = $largeSrc;

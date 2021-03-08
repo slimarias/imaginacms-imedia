@@ -43,7 +43,7 @@ class File extends Model implements TaggableInterface, Responsable
         'height',
         'filesize',
         'folder_id',
-    'created_by',
+        'created_by',
         'disk'
     ];
     protected $appends = ['path_string', 'media_type'];
@@ -58,7 +58,8 @@ class File extends Model implements TaggableInterface, Responsable
     public function getPathAttribute($value)
     {
         $disk = is_null($this->disk)? config('asgard.media.config.filesystem') : $this->disk;
-        return new MediaPath($value,$disk);
+
+        return new MediaPath($disk == "privatemedia" ? config('asgard.media.config.files-path').$this->id : $value,$disk);
     }
 
     public function getPathStringAttribute()
@@ -78,7 +79,12 @@ class File extends Model implements TaggableInterface, Responsable
 
     public function isImage()
     {
-        return in_array(pathinfo($this->path, PATHINFO_EXTENSION), $this->imageExtensions);
+      if( $this->disk == 'privatemedia' ){
+        $privateDisk = config('filesystems.disks.privatemedia');
+        $path = $privateDisk["root"]. config('asgard.media.config.files-path').$this->filename;
+      }
+        
+        return in_array(pathinfo($path ?? $this->path, PATHINFO_EXTENSION), $this->imageExtensions);
     }
 
     public function getThumbnail($type)
